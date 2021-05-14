@@ -3,7 +3,7 @@
 `kakship` is just a thin wrapper around [starship](https://starship.rs) to format the status line of
 [kakoune](https://kakoune.org/) and is meant to be used with the included kakoune script `kakship.kak`.
 
-![kakship prompt](kakscript.png?raw=true "Kakship prompt")
+![kakship prompt](kakship.png?raw=true "Kakship prompt")
 
 # Mode of Operation
 
