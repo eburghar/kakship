@@ -1,0 +1,61 @@
+diff --git src/graphic_rendition.rs src/graphic_rendition.rs
+index 6fe281b..7a4085c 100644
+--- src/graphic_rendition.rs
++++ src/graphic_rendition.rs
+@@ -84,11 +84,14 @@ impl Display for ColorName {
+ pub enum Sgr {
+     Reset,
+     Bold,
++    Dim,
+     BoldOff,
+     Italic,
+     ItalicOff,
+     Underline,
+     UnderlineOff,
++    Reverse,
++    ReverseOff,
+     ColorFgRgb(u32),
+     ColorFgName(ColorName),
+     ColorFgNameBright(ColorName),
+@@ -170,11 +173,14 @@ impl Sgr {
+         Some(match code {
+             0 => Reset,
+             1 => Bold,
++            2 => Dim,
+             3 => Italic,
+             4 => Underline,
++            7 => Reverse,
+             22 => BoldOff,
+             23 => ItalicOff,
+             24 => UnderlineOff,
++            27 => ReverseOff,
+             30..=37 => ColorFgName(ColorName::from_code(code)?),
+             38 => Self::color_rgb(params, false)?,
+             39 => ResetColorFg,
+@@ -235,8 +241,10 @@ impl From<&Sgr> for ColorEffect {
+ #[derive(Clone, Debug, Default, Eq, PartialEq)]
+ pub struct SgrEffect {
+     pub bold: bool,
++    pub dim: bool,
+     pub italic: bool,
+     pub underline: bool,
++    pub reverse: bool,
+     /// Foreground colour
+     pub fg: ColorEffect,
+     /// Background colour
+@@ -254,11 +262,14 @@ impl SgrEffect {
+         match sgr {
+             Reset => self.reset(),
+             Bold => self.bold = true,
+-            BoldOff => self.bold = false,
++            Dim => self.dim = true,
++            BoldOff => { self.bold = false; self.dim = false },
+             Italic => self.italic = true,
+             ItalicOff => self.italic = false,
+             Underline => self.underline = true,
+             UnderlineOff => self.underline = false,
++            Reverse => self.reverse = true,
++            ReverseOff => self.reverse = false,
+             ColorFgRgb(_) | ColorFgName(_) | ColorFgNameBright(_) | ResetColorFg => {
+                 self.fg = ColorEffect::from(sgr);
+             }

@@ -1,0 +1,32 @@
+html {
+  background-color: white;
+  font-size: small;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.ansi-container {
+  filter: invert(100%);
+  font-family: "Courier New", Courier, monospace;
+  margin: 0;
+}
+
+.ansi {
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+}
+
+.bold {
+  font-weight: bolder;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}

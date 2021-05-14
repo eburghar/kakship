@@ -1,0 +1,10 @@
+[package]
+name = "kakship"
+version = "0.1.0"
+authors = ["Éric BURGHARD <eric@itsufficient.me>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yew-ansi = {version = "0.1.0", default-features = false, path = "./yew_ansi" }
