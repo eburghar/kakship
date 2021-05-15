@@ -118,7 +118,7 @@ disabled = false
 
 [custom.kaksession]
 description = 'The current Kakoune session'
-format = '[]($style)[  val{client}:val{session} ]($style)[]($style inverted)'
+format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
 when = ''
 shell = ['true']
 style = 'bg:yellow fg:black'
@@ -126,7 +126,7 @@ disabled = false
 
 [custom.kakcursor]
 description = 'The current Kakoune cursor position'
-format = '[val{cursor_line}:val{cursor_char_column}]($style)'
+format = '[%val{cursor_line}:%val{cursor_char_column}]($style)'
 when = ''
 shell = ['true']
 style = 'fg:white'

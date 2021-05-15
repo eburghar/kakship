@@ -42,6 +42,7 @@ disabled = false
 
 [git_state]
 format = '\( [$state($progress_current/$progress_total)]($style)\)'
+style = 'fg:bright-yellow'
 rebase = 'REBASING'
 merge = 'MERGING'
 revert = 'REVERTING'
@@ -49,7 +50,6 @@ cherry_pick = 'CHERRY-PICKING'
 bisect = 'BISECTING'
 am = 'AM'
 am_or_rebase = 'AM/REBASE'
-style = 'fg:bright-yellow'
 disabled = false
 
 [git_status]
@@ -69,12 +69,12 @@ disabled = false
 
 [directory]
 format = '[]($style)[ $read_only]($read_only_style)[$path]($style)'
+style = 'bg:blue fg:black'
+read_only_style = 'bg:blue fg:200'
 truncation_length = 3
 truncate_to_repo = false
 fish_style_pwd_dir_length = 0
 use_logical_path = true
-style = 'bg:blue fg:black'
-read_only_style = 'bg:blue fg:200'
 read_only = '[]'
 truncation_symbol = '…'
 disabled = false
@@ -104,7 +104,7 @@ disabled = true
 format = '[ $version]($style) '
 style = 'cyan'
 display_private = true
-disabled = true
+disabled = false
 
 [battery]
 format = "[ $symbol$percentage]($style) "
@@ -188,7 +188,7 @@ disabled = false
 
 [custom.kaksession]
 description = 'The current Kakoune session'
-format = '[]($style)[  val{client}:val{session} ]($style)[]($style inverted)'
+format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
 style = 'bg:yellow fg:black'
 when = ''
 shell = ['true']
@@ -196,7 +196,7 @@ disabled = true
 
 [custom.kakcursor]
 description = 'The current Kakoune cursor position'
-format = '[val{cursor_line}:val{cursor_char_column}]($style)'
+format = '[%val{cursor_line}:%val{cursor_char_column}]($style)'
 style = 'fg:white'
 when = ''
 shell = ['true']

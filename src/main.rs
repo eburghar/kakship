@@ -1,6 +1,8 @@
 mod error;
+mod escape;
 
 use crate::error::Error;
+use crate::escape::{Token, EscapeIterator};
 use std::env;
 use std::process::Command;
 use std::path::Path;
@@ -52,7 +54,13 @@ fn main() -> Result<(), Error>{
 						if has_option { print_options(&effect); }
 						print!("}}");
 					}
-					print!("{}", txt.replace("%", "%%").replace("val{","%val{"));
+					for token in EscapeIterator::new(txt) {
+						match token {
+							Token::Percent => print!("%%"),
+							Token::Str(txt) => print!("{}", txt)
+						}
+					}
+					// print!("{}", txt.replace("%", "%%").replace("val{","%val{"));
 				}
 			} else {
 				println!("{}", stdout);
