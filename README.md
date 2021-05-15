@@ -15,10 +15,10 @@
   activates modules, measure modules timings, ...),
 - transforms ansi-codes to `kakoune` face definitions so it can be rendered correctly with all styles
 
-It use an included [yew-ansi](https://github.com/siku2/yew-ansi) crate for parsing the ansi-codes to which I just
+It uses an included [yew-ansi](https://github.com/siku2/yew-ansi) crate for parsing the ansi-codes to which I just
 added support for `reversed` and `dimmed` ansi-codes that can be used in `starship` styles definitions.
 
-The kakoune script call `kakship` when buffer is idle for all normal buffers As `starship` is really fast and format
+The kakoune script call `kakship` when buffer is idle for all normal windows. As `starship` is really fast and format
 a prompt in ms, the script doesn't need to be clever about when refreshing the status bar.
 
 ## Installation
@@ -28,7 +28,7 @@ a prompt in ms, the script doesn't need to be clever about when refreshing the s
 1. Compile `kakship` with cargo and install it somewhere in your $PATH (for example `~/.local/bin`)
 
 ```sh
-cargo install --path . --root ~/.local
+cargo install --force --path . --root ~/.local
 ```
 
 2. Copy/modify the provided `starship.toml` to your `$kak_config` directory (usually `~/.config/kak/`)
@@ -163,8 +163,8 @@ with [plug.kak](https://github.com/andreyorst/plug.kak)
 
 ```
 plug "eburghar/kakship" do %{
-	cargo install --path . --root ~/.local
-	[ -e $kak_config/starship.toml ] && cp starship.tom $kak_config/
+	cargo install --force --path . --root ~/.local
+	[ ! -e $kak_config/starship.toml ] && cp starship.toml $kak_config/
 } config %{
 	kakship-enable
 }

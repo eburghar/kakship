@@ -1,6 +1,6 @@
 declare-option -docstring "modelinefmt backup value." str kakship_modelinefmt_bak %opt{modelinefmt}
 
-define-command -docstring "kakship-enable: require kakship module and enable kakship for all normal buffers." \
+define-command -docstring "kakship-enable: require kakship module and enable kakship for all regular windows." \
 kakship-enable %{
 	remove-hooks global kakship(-.*)?
 	hook -group kakship global WinCreate ^[^*]+$ %{

@@ -184,7 +184,7 @@ format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style in
 style = 'bg:yellow fg:black'
 when = ''
 shell = ['true']
-disabled = false
+disabled = true
 
 [custom.kakcursor]
 description = 'The current Kakoune cursor position'
@@ -213,7 +213,7 @@ description = 'The current buffer filetype'
 format = '\[%opt{filetype}\] '
 when = ''
 shell = ['true']
-disabled = false
+disabled = true
 
 [custom.kakposition]
 description = 'Relative position of the cursor inside the buffer'
@@ -223,4 +223,4 @@ symbol = ' '
 command = 'echo -n $(($kak_cursor_line * 100 / $kak_buf_line_count))%'
 when = '[ -n "$kak_cursor_line" ]'
 shell = ['sh']
-disabled = false
+disabled = true
