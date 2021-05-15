@@ -69,6 +69,12 @@ mod tests {
 	}
 
 	#[test]
+	fn test_nopercent() {
+		let tokens: Vec<_> = EscapeIterator::new("hello world !").collect();
+		assert_eq!(tokens, vec![Token::Str("hello world !")]);
+	}
+
+	#[test]
 	fn test_opt() {
 		let tokens: Vec<_> = EscapeIterator::new("%opt{session}").collect();
 		assert_eq!(tokens, vec![Token::Str("%opt{session}")]);

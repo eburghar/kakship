@@ -1,19 +1,19 @@
-# kakship and kaksip.kak
+# kakship and kakship.kak
 
 `kakship` is just a thin wrapper around [starship](https://starship.rs) to format the status line of
 [kakoune](https://kakoune.org/) and is meant to be used with the included kakoune script `kakship.kak`.
 
 ![kakship prompt](kakship.png?raw=true "Kakship prompt")
 
-# Mode of Operation
+## Operating mode
 
 `kakship`
 
-- override default config file path with `$kak_config/starship.toml`
-- define the shell to none to disable escaping
-- call `starship` with the given arguments, so you can use the same arguments than `starship` (show computed config,
-  activate modules, measure modules timings, ...),
-- transform ansi-codes to `kakoune` face definitions so it can be rendered correctly with all styles
+- overrides override the default config file path with `$kak_config/starship.toml`
+- defines the shell to none to disable escaping
+- calls `starship` with the given arguments, so you can use the same arguments than `starship` (show computed config,
+  activates modules, measure modules timings, ...),
+- transforms ansi-codes to `kakoune` face definitions so it can be rendered correctly with all styles
 
 It use an included [yew-ansi](https://github.com/siku2/yew-ansi) crate for parsing the ansi-codes to which I just
 added support for `reversed` and `dimmed` ansi-codes that can be used in `starship` styles definitions.
@@ -21,7 +21,9 @@ added support for `reversed` and `dimmed` ansi-codes that can be used in `starsh
 The kakoune script call `kakship` when buffer is idle for all normal buffers As `starship` is really fast and format
 a prompt in ms, the script doesn't need to be clever about when refreshing the status bar.
 
-# Installation
+## Installation
+
+### Manual
 
 1. Compile `kakship` with cargo and install it somewhere in your $PATH (for example `~/.local/bin`)
 
@@ -57,15 +59,17 @@ always_show_remote = true
 disabled = false
 
 [git_commit]
-commit_hash_length = 7
 format = '[ \($hash$tag\)]($style)'
 style = 'fg:bright-yellow'
+commit_hash_length = 7
 only_detached = true
-disabled = false
 tag_symbol = ' '
 tag_disabled = false
+disabled = false
 
 [git_state]
+format = '\( [$state($progress_current/$progress_total)]($style)\)'
+style = 'fg:bright-yellow'
 rebase = 'REBASING'
 merge = 'MERGING'
 revert = 'REVERTING'
@@ -73,8 +77,6 @@ cherry_pick = 'CHERRY-PICKING'
 bisect = 'BISECTING'
 am = 'AM'
 am_or_rebase = 'AM/REBASE'
-style = 'fg:bright-yellow'
-format = '\( [$state($progress_current/$progress_total)]($style)\)'
 disabled = false
 
 [git_status]
@@ -93,16 +95,16 @@ untracked = '?'
 disabled = false
 
 [directory]
+format = '[]($style)[ $read_only]($read_only_style)[$path]($style)'
+style = 'bg:blue fg:black'
 truncation_length = 3
 truncate_to_repo = false
 fish_style_pwd_dir_length = 0
 use_logical_path = true
-format = '[]($style)[ $read_only]($read_only_style)[$path]($style)'
-style = 'bg:blue fg:black'
 read_only_style = 'bg:blue fg:200'
-disabled = false
 read_only = '[]'
 truncation_symbol = '…'
+disabled = false
 
 [directory.substitutions]
 "~/.config" = " "
@@ -155,14 +157,35 @@ hook global ModuleLoaded kakship .* %{
 }
 ```
 
-You can use any plugin manager.
+### With a plugin manager
 
-# Tips
+with [plug.kak](https://github.com/andreyorst/plug.kak)
 
-You can use
+```
+plug "eburghar/kakship" do %{
+	cargo install --path . --root ~/.local
+	[ -e $kak_config/starship.toml ] && cp starship.tom $kak_config/
+} config %{
+	kakship-enable
+}
+```
+
+## Tips
+
+To check if your modeline is not overloaded.
 
 ```sh
 kak_config="~/.config/kak" kakship timings
 ```
 
-To check if your modeline is not overloaded.
+To check the settings with all module default values
+
+```sh
+kak_config="~/.config/kak" kakship print-config
+```
+
+To debug the prompt as set under kakoune
+
+```sh
+kak_config="~/.config/kak" kakship prompt
+```

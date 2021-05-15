@@ -60,7 +60,6 @@ fn main() -> Result<(), Error>{
 							Token::Str(txt) => print!("{}", txt)
 						}
 					}
-					// print!("{}", txt.replace("%", "%%").replace("val{","%val{"));
 				}
 			} else {
 				println!("{}", stdout);
