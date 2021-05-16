@@ -61,7 +61,7 @@ impl<'a> EscapeIterator<'a> {
 /// Iterator that either yield
 /// - a percent (to be escaped)
 /// - a string that doesn't have any %
-/// - a block with matching braces (%opt %var, %sh, %)
+/// - a block with matching braces (%file, %arg, %val, %opt, %sh, %)
 impl<'a> Iterator for EscapeIterator<'a> {
 	type Item = Token<'a>;
 
@@ -73,21 +73,23 @@ impl<'a> Iterator for EscapeIterator<'a> {
 				self.yield_block(2)
 			} else if self.remainder[1..].starts_with("sh{") {
 				self.yield_block(4)
-			} else if self.remainder[1..].starts_with("opt{") || self.remainder[1..].starts_with("val{") {
+			} else if self.remainder[1..].starts_with("opt{")
+				|| self.remainder[1..].starts_with("val{")
+				|| self.remainder[1..].starts_with("reg{")
+				|| self.remainder[1..].starts_with("arg{")
+			{
 				self.yield_block(5)
+			} else if self.remainder[1..].starts_with("file{") {
+				self.yield_block(6)
 			} else {
 				self.yield_percent()
 			}
 		} else {
 			match self.remainder.find("%") {
-				None => {
-					self.yield_remainder()
-				}
-				Some(end) => {
-					self.yield_chunk(end)
-				}
+				None => self.yield_remainder(),
+				Some(end) => self.yield_chunk(end),
 			}
-		}
+		};
 	}
 }
 
@@ -134,12 +136,7 @@ mod tests {
 	#[test]
 	fn expansion() {
 		let tokens: Vec<_> = EscapeIterator::new("%{echo %opt{filetype}}").collect();
-		assert_eq!(
-			tokens,
-			vec![
-				Token::Block("%{echo %opt{filetype}}")
-			]
-		);
+		assert_eq!(tokens, vec![Token::Block("%{echo %opt{filetype}}")]);
 	}
 
 	#[test]
