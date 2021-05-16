@@ -31,123 +31,8 @@ a prompt in ms, the script doesn't need to be clever about when refreshing the s
 cargo install --force --path . --root ~/.local
 ```
 
-2. Copy/modify the provided `starship.toml` to your `$kak_config` directory (usually `~/.config/kak/`)
+2. Copy/modify the provided [starship.toml](starship.toml) to your `$kak_config` directory (usually `~/.config/kak/`)
 
-Here is a minimal one with git information
-
-```toml
-add_newline = false
-format = """\
-${custom.kakcursor}\
-${custom.kakmode}\
-${custom.kakcontext}\
-$directory\
-${custom.kakfile}\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status\
-${custom.kaksession}"""
-
-[git_branch]
-format = '[ $branch]($style)'
-style = 'fg:bright-red'
-truncation_length = 9223372036854775807
-truncation_symbol = '…'
-only_attached = false
-always_show_remote = true
-disabled = false
-
-[git_commit]
-format = '[ \($hash$tag\)]($style)'
-style = 'fg:bright-yellow'
-commit_hash_length = 7
-only_detached = true
-tag_symbol = ' '
-tag_disabled = false
-disabled = false
-
-[git_state]
-format = '\( [$state($progress_current/$progress_total)]($style)\)'
-style = 'fg:bright-yellow'
-rebase = 'REBASING'
-merge = 'MERGING'
-revert = 'REVERTING'
-cherry_pick = 'CHERRY-PICKING'
-bisect = 'BISECTING'
-am = 'AM'
-am_or_rebase = 'AM/REBASE'
-disabled = false
-
-[git_status]
-format = '( [\[$all_status$ahead_behind\]]($style) )'
-style = 'fg:bright-yellow'
-stashed = '\$'
-ahead = '⇡${count}'
-behind = '⇣${count}'
-diverged = '⇕⇡${ahead_count}⇣${behind_count}'
-conflicted = '='
-deleted = '✘'
-renamed = '»'
-modified = '!'
-staged = '+'
-untracked = '?'
-disabled = false
-
-[directory]
-format = '[]($style)[ $read_only]($read_only_style)[$path]($style)'
-style = 'bg:blue fg:black'
-truncation_length = 3
-truncate_to_repo = false
-fish_style_pwd_dir_length = 0
-use_logical_path = true
-read_only_style = 'bg:blue fg:200'
-read_only = '[]'
-truncation_symbol = '…'
-disabled = false
-
-[directory.substitutions]
-"~/.config" = " "
-
-[custom.kakfile]
-description = 'The current Kakoune buffername'
-format = '[/$output ]($style)[]($style inverted) '
-command = 'basename $kak_buffile'
-when = 'true'
-shell = ['sh']
-style = 'bold bg:blue fg:black'
-disabled = false
-
-[custom.kaksession]
-description = 'The current Kakoune session'
-format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
-when = ''
-shell = ['true']
-style = 'bg:yellow fg:black'
-disabled = false
-
-[custom.kakcursor]
-description = 'The current Kakoune cursor position'
-format = '[%val{cursor_line}:%val{cursor_char_column}]($style)'
-when = ''
-shell = ['true']
-style = 'fg:white'
-disabled = false
-
-[custom.kakmode]
-description = 'The current Kakoune mode'
-format = ' {{mode_info}}'
-when = ''
-shell = ['true']
-disabled = false
-
-[custom.kakcontext]
-description = 'The current Kakoune context'
-format = ' {{context_info}}'
-when = ''
-shell = ['true']
-disabled = false
-```
 
 3. Put the `kakship.kak` script in your autoload path and add something like this to your kakrc
 
@@ -170,6 +55,108 @@ plug "eburghar/kakship" do %{
 }
 ```
 
+## Writing custom segments
+
+To write new segment, you can use the [custom-commands](https://starship.rs/config/#custom-commands) module of starship.
+Define a new section with a dot notation, and insert a variable with the same name in the topmost format variable.
+
+In case you just need string substitutions (like custom.kakmode above), you can avoid calling a shell to evaluate the
+`when` condition by setting the `shell` variable to `['true']` and the `when` variable to `''`. In case no `$output`
+variable appears in the format, `command` variable is not used and no shell is called. The segment will be faster to evaluate.
+
+In case you need to call and external command, you have 2 choices:
+
+1. setup `shell`, `command` and `when` and let starship do the evaluation
+2. use `%sh{}` block or other blocks inside the format and let kakoune do the evaluation
+
+The difference is that with `%sh{}`, kakoune will rebuild the modeline every second or so when in normal mode. This
+lead for example to a custom time segment definition (`custom.kaktime` below ) which will show seconds even if the
+editor is idle, contrary to the starship time module which change only during pause.
+
+## Kakoune segments
+
+Here is a some common segments for kakoune. I'll be happy to maintain a catalog if you send me a MR.
+
+```toml
+# TODO: use a kakoune option set in appropriate hooks and use %opt{basename} instead of calling a shell
+[custom.kakfile]
+description = 'The current Kakoune buffername'
+format = '[/$output ]($style)[]($style inverted) '
+style = 'bold bg:blue fg:black'
+command = 'basename $kak_buffile'
+when = 'true'
+shell = ['sh']
+disabled = false
+```
+
+```toml
+[custom.kaksession]
+description = 'The current Kakoune session'
+format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
+style = 'bg:yellow fg:black'
+when = ''
+shell = ['true']
+disabled = true
+```
+
+```toml
+[custom.kakcursor]
+description = 'The current Kakoune cursor position'
+format = '[%val{cursor_line}:%val{cursor_char_column}]($style)'
+style = 'fg:white'
+when = ''
+shell = ['true']
+disabled = false
+```
+
+```toml
+[custom.kakmode]
+description = 'The current Kakoune mode'
+format = ' {{mode_info}}'
+when = ''
+shell = ['true']
+disabled = false
+```
+
+```toml
+[custom.kakcontext]
+description = 'The current Kakoune context'
+format = ' {{context_info}}'
+when = ''
+shell = ['true']
+disabled = false
+```
+
+```toml
+[custom.kakfiletype]
+description = 'The current buffer filetype'
+format = '\[%opt{filetype}\] '
+when = ''
+shell = ['true']
+disabled = true
+```
+
+```toml
+[custom.kakposition]
+description = 'Relative position of the cursor inside the buffer'
+format = '[  $output]($style)'
+style = 'bright-white'
+command = 'echo -n $(($kak_cursor_line * 100 / $kak_buf_line_count))%'
+when = '[ -n "$kak_cursor_line" ]'
+shell = ['sh']
+disabled = true
+```
+
+```toml
+[custom.kaktime]
+description = "Alternate time segment using kakoune evaluation"
+format = "[]($style)[  %sh{date +%T} ]($style)"
+style = "fg:black bg:bright-green"
+when = ''
+shell = ['true']
+disabled = false
+```
+
 ## Tips
 
 To check if your modeline is not overloaded.
@@ -178,7 +165,7 @@ To check if your modeline is not overloaded.
 kak_config="~/.config/kak" kakship timings
 ```
 
-To check the settings with all module default values
+To check the settings with all modules default values
 
 ```sh
 kak_config="~/.config/kak" kakship print-config

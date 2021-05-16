@@ -2,19 +2,29 @@ mod error;
 mod escape;
 
 use crate::error::Error;
-use crate::escape::{Token, EscapeIterator};
+use crate::escape::{EscapeIterator, Token};
 use std::env;
-use std::process::Command;
 use std::path::Path;
-use yew_ansi::{SgrEffect, ColorEffect, get_sgr_segments};
+use std::process::Command;
+use yew_ansi::{get_sgr_segments, ColorEffect, SgrEffect};
 
 fn print_options(effect: &SgrEffect) {
 	print!("+");
-	if effect.italic { print!("i"); }
-	if effect.underline { print!("u"); }
-	if effect.bold { print!("b"); }
-	if effect.reverse { print!("r"); }
-	if effect.dim { print!("d"); }
+	if effect.italic {
+		print!("i");
+	}
+	if effect.underline {
+		print!("u");
+	}
+	if effect.bold {
+		print!("b");
+	}
+	if effect.reverse {
+		print!("r");
+	}
+	if effect.dim {
+		print!("d");
+	}
 }
 
 fn print_color(color: &ColorEffect) {
@@ -22,42 +32,53 @@ fn print_color(color: &ColorEffect) {
 		ColorEffect::Name(color) => print!("{}", color),
 		ColorEffect::NameBright(color) => print!("bright-{}", color),
 		ColorEffect::Rgb(color) => print!("rgb:{:X}", color),
-		ColorEffect::None => ()
+		ColorEffect::None => (),
 	}
 }
 
-fn main() -> Result<(), Error>{
+fn main() -> Result<(), Error> {
 	let config_dir = env::var("kak_config")?;
 	let config = Path::new(&config_dir).join("starship.toml");
 	let args: Vec<String> = env::args().skip(1).collect();
-	let starship= Command::new("starship")
+	let starship = Command::new("starship")
 		.env("STARSHIP_SHELL", "")
 		.env("STARSHIP_CONFIG", config)
 		.args(&args)
 		.output()?;
 
 	return if starship.status.code() != Some(0) {
-		Err(Error::StarshipError(String::from_utf8_lossy(&starship.stderr).to_string()))
+		Err(Error::StarshipError(
+			String::from_utf8_lossy(&starship.stderr).into(),
+		))
 	} else {
 		let stdout = String::from_utf8_lossy(&starship.stdout);
 		if let Some(verb) = args.get(0) {
 			if verb == "prompt" {
 				for (effect, txt) in get_sgr_segments(&stdout) {
-					let has_option = effect.italic || effect.underline || effect.bold || effect.reverse || effect.dim;
-					let has_color = effect.bg != ColorEffect::None || effect.fg != ColorEffect::None;
+					let has_option = effect.italic
+						|| effect.underline || effect.bold
+						|| effect.reverse || effect.dim;
+					let has_color =
+						effect.bg != ColorEffect::None || effect.fg != ColorEffect::None;
 					if has_option || has_color {
-						let has_colors = effect.bg != ColorEffect::None && effect.fg != ColorEffect::None;
+						let has_colors =
+							effect.bg != ColorEffect::None && effect.fg != ColorEffect::None;
 						print!("{{");
 						print_color(&effect.fg);
-						if has_colors { print!(","); }
+						if has_colors {
+							print!(",");
+						}
 						print_color(&effect.bg);
-						if has_option { print_options(&effect); }
+						if has_option {
+							print_options(&effect);
+						}
 						print!("}}");
 					}
 					for token in EscapeIterator::new(txt) {
 						match token {
 							Token::Percent => print!("%%"),
-							Token::Str(txt) => print!("{}", txt)
+							Token::Str(txt) => print!("{}", txt),
+							Token::Block(txt) => print!("{}", txt),
 						}
 					}
 				}
@@ -67,5 +88,5 @@ fn main() -> Result<(), Error>{
 			}
 		}
 		Ok(())
-	}
+	};
 }

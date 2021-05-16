@@ -15,13 +15,14 @@ ${custom.kaksession}\
 $memory_usage\
 $battery\
 ${custom.kakposition}\
-$time"""
+$time\
+${custom.kaktime}"""
 
 [time]
 format = "[]($style)[  $time ]($style)"
 style = "fg:black bg:bright-green"
 time_format = "%H:%M"
-disabled = false
+disabled = true
 
 [git_branch]
 format = '[ $branch]($style)'
@@ -102,6 +103,7 @@ disabled = true
 format = "[ $symbol$percentage]($style) "
 charging_symbol = ' '
 discharging_symbol = ' '
+disabled = false
 
 [[battery.display]]
 threshold = 10
@@ -217,10 +219,17 @@ disabled = true
 
 [custom.kakposition]
 description = 'Relative position of the cursor inside the buffer'
-format = '[$symbol$output]($style)'
+format = '[ $output]($style)'
 style = 'bright-white'
-symbol = ' '
 command = 'echo -n $(($kak_cursor_line * 100 / $kak_buf_line_count))%'
 when = '[ -n "$kak_cursor_line" ]'
 shell = ['sh']
 disabled = true
+
+[custom.kaktime]
+description = "Alternate time segment using kakoune evaluation"
+format = "[]($style)[  %sh{date +%T} ]($style)"
+style = "fg:black bg:bright-green"
+when = ''
+shell = ['true']
+disabled = false

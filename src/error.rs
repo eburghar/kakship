@@ -5,7 +5,7 @@ use std::io;
 pub enum Error {
 	ConfigVarError(env::VarError),
 	IoError(io::Error),
-	StarshipError(String)
+	StarshipError(String),
 }
 
 impl fmt::Debug for Error {
@@ -24,13 +24,13 @@ impl fmt::Debug for Error {
 }
 
 impl From<env::VarError> for Error {
-	fn from(err: env::VarError) -> Error {
+	fn from(err: env::VarError) -> Self {
 		Error::ConfigVarError(err)
 	}
 }
 
 impl From<io::Error> for Error {
-	fn from(err: io::Error) -> Error {
+	fn from(err: io::Error) -> Self {
 		Error::IoError(err)
 	}
 }

@@ -2,6 +2,7 @@
 pub enum Token<'a> {
 	Percent,
 	Str(&'a str),
+	Block(&'a str),
 }
 
 pub struct EscapeIterator<'a> {
@@ -12,41 +13,79 @@ impl<'a> EscapeIterator<'a> {
 	pub fn new(string: &'a str) -> Self {
 		Self { remainder: string }
 	}
+
+	// (TODO: handle block escape)
+	pub fn yield_block(&mut self, header_size: usize) -> Option<Token<'a>> {
+		let mut count = 1;
+		let mut end = header_size;
+		for c in self.remainder[header_size..].chars() {
+			if count == 0 {
+				break;
+			}
+			if c == '{' {
+				count += 1;
+			} else if c == '}' {
+				count -= 1;
+			}
+			end += 1;
+		}
+		if end < self.remainder.len() {
+			let chunk = &self.remainder[..end];
+			self.remainder = &self.remainder[end..];
+			return Some(Token::Block(chunk));
+		} else {
+			let chunk = self.remainder;
+			self.remainder = "";
+			return Some(Token::Block(chunk));
+		}
+	}
+
+	pub fn yield_percent(&mut self) -> Option<Token<'a>> {
+		self.remainder = &self.remainder[1..];
+		Some(Token::Percent)
+	}
+
+	pub fn yield_remainder(&mut self) -> Option<Token<'a>> {
+		let chunk = self.remainder;
+		self.remainder = "";
+		Some(Token::Str(chunk))
+	}
+
+	pub fn yield_chunk(&mut self, end: usize) -> Option<Token<'a>> {
+		let chunk = &self.remainder[..end];
+		self.remainder = &self.remainder[end..];
+		Some(Token::Str(chunk))
+	}
 }
 
-/// Iterator that either return a percent which is not prefixing opt{, var{, sh, or { (as they are reserved as expansion
-/// expressions in kakoune) or a string slice without percent
+/// Iterator that either yield
+/// - a percent (to be escaped)
+/// - a string that doesn't have any %
+/// - a block with matching braces (%opt %var, %sh, %)
 impl<'a> Iterator for EscapeIterator<'a> {
 	type Item = Token<'a>;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		let mut cursor = 0;
-		loop {
-			if self.remainder.is_empty() {
-				return None;
-			} else if let Some(end) = self.remainder[cursor..].find("%") {
-				let chunk = &self.remainder[..cursor + end];
-				let remainder = &self.remainder[cursor + end..];
-				if remainder.starts_with("%val{") || remainder.starts_with("%opt{") {
-					cursor += end + 5;
-					continue;
-				} else if remainder.starts_with("%sh{") {
-					cursor += end + 4;
-					continue;
-				} else if remainder.starts_with("%{") {
-					cursor += end + 2;
-					continue;
-				} else if cursor + end == 0 {
-					self.remainder = &self.remainder[1..];
-					return Some(Token::Percent);
-				} else {
-					self.remainder = &self.remainder[cursor + end..];
-					return Some(Token::Str(chunk));
-				}
+		return if self.remainder.is_empty() {
+			None
+		} else if self.remainder.starts_with("%") {
+			if self.remainder[1..].starts_with("{") {
+				self.yield_block(2)
+			} else if self.remainder[1..].starts_with("sh{") {
+				self.yield_block(4)
+			} else if self.remainder[1..].starts_with("opt{") || self.remainder[1..].starts_with("val{") {
+				self.yield_block(5)
 			} else {
-				let chunk = self.remainder;
-				self.remainder = "";
-				return Some(Token::Str(chunk));
+				self.yield_percent()
+			}
+		} else {
+			match self.remainder.find("%") {
+				None => {
+					self.yield_remainder()
+				}
+				Some(end) => {
+					self.yield_chunk(end)
+				}
 			}
 		}
 	}
@@ -57,51 +96,70 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn test_empty() {
+	fn empty() {
 		let tokens: Vec<_> = EscapeIterator::new("").collect();
 		assert_eq!(tokens, &[]);
 	}
 
 	#[test]
-	fn test_percent() {
+	fn percent() {
 		let tokens: Vec<_> = EscapeIterator::new("%").collect();
 		assert_eq!(tokens, vec![Token::Percent]);
 	}
 
 	#[test]
-	fn test_nopercent() {
+	fn string() {
 		let tokens: Vec<_> = EscapeIterator::new("hello world !").collect();
 		assert_eq!(tokens, vec![Token::Str("hello world !")]);
 	}
 
 	#[test]
-	fn test_opt() {
-		let tokens: Vec<_> = EscapeIterator::new("%opt{session}").collect();
-		assert_eq!(tokens, vec![Token::Str("%opt{session}")]);
+	fn opt() {
+		let tokens: Vec<_> = EscapeIterator::new("%opt{filetype}").collect();
+		assert_eq!(tokens, vec![Token::Block("%opt{filetype}")]);
 	}
 
 	#[test]
-	fn test_shell() {
+	fn val() {
+		let tokens: Vec<_> = EscapeIterator::new("%val{session}").collect();
+		assert_eq!(tokens, vec![Token::Block("%val{session}")]);
+	}
+
+	#[test]
+	fn sh() {
 		let tokens: Vec<_> = EscapeIterator::new("%sh{basename \"$kak_file\"}").collect();
-		assert_eq!(tokens, vec![Token::Str("%sh{basename \"$kak_file\"}")]);
+		assert_eq!(tokens, vec![Token::Block("%sh{basename \"$kak_file\"}")]);
 	}
 
 	#[test]
-	fn test_expansion() {
-		let tokens: Vec<_> = EscapeIterator::new("%{echo session}").collect();
-		assert_eq!(tokens, vec![Token::Str("%{echo session}")]);
-	}
-
-	#[test]
-	fn test_mixed() {
-		let tokens: Vec<_> = EscapeIterator::new("98% %val{session}").collect();
+	fn expansion() {
+		let tokens: Vec<_> = EscapeIterator::new("%{echo %opt{filetype}}").collect();
 		assert_eq!(
 			tokens,
 			vec![
-				Token::Str("98"),
-				Token::Percent,
-				Token::Str(" %val{session}")
+				Token::Block("%{echo %opt{filetype}}")
 			]
 		);
+	}
+
+	#[test]
+	fn mixed() {
+		let tokens: Vec<_> = EscapeIterator::new("%opt{filetype} 98% %val{session}").collect();
+		assert_eq!(
+			tokens,
+			vec![
+				Token::Block("%opt{filetype}"),
+				Token::Str(" 98"),
+				Token::Percent,
+				Token::Str(" "),
+				Token::Block("%val{session}")
+			]
+		);
+	}
+
+	#[test]
+	fn noescape_inside_block() {
+		let tokens: Vec<_> = EscapeIterator::new("%{date +%T}").collect();
+		assert_eq!(tokens, vec![Token::Block("%{date +%T}")]);
 	}
 }
