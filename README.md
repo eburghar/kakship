@@ -22,6 +22,11 @@ a prompt in ms, the script doesn't need to be clever about when refreshing the s
 
 ## Installation
 
+### Prerequisites
+
+- [starship](https://starship.rs) must be installed,
+- you should probably use [nerd font](https://www.nerdfonts.com) for your terminal.
+
 ### Manual
 
 1. Compile `kakship` with cargo and install it somewhere in your $PATH (for example `~/.local/bin`)
