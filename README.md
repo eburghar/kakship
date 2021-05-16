@@ -56,22 +56,26 @@ plug "eburghar/kakship" do %{
 
 ## Writing custom segments
 
-To write new segment, you can use the [custom-commands](https://starship.rs/config/#custom-commands) module of starship.
-Define a new section with a dot notation, and insert a variable with the same name in the topmost format definition.
+To write new segment, you can use the [custom-commands](https://starship.rs/config/#custom-commands) module
+of starship.  Define a new section with a dot notation, and insert a variable with the same name in the topmost
+format definition.
 
-In case you just need string substitutions (like custom.kakmode bellow), you can avoid calling a shell to evaluate the
-`when` condition by setting the `shell` variable to `['true']` and the `when` variable to `''`. In case no `$output`
-variable appears in the format, `command` variable is not used and no shell is called. The segment will be faster to evaluate.
+In case you just need string substitutions (like `custom.kakmode` bellow), you can avoid calling a shell to evaluate
+the `when` condition by setting the `shell` variable to `['true']` and the `when` variable to `''`. In case no
+`$output` variable appears in the format, `command` variable is not used and no shell is called. The segment will
+be faster to evaluate.
 
 In case you really need to call an external command, you have 2 choices:
 
 1. setup `shell`, `command` and `when` and let starship do the evaluation
-2. use `%sh{}` block or other expansion blocks inside the format and let kakoune do the evaluation. Note than only
-curly brace is supported as the quoting char.
 
-The difference is that with `%sh{}`, kakoune will rebuild the modeline every second or so when in normal mode. This
-lead for example to a custom time segment definition (`custom.kaktime` below ) which will show seconds even if the
-editor is idle, contrary to the starship time module which change only during pause.
+2. use a kakoune expansion blocks (`sh`, `opt`, `val`, `reg`, `file`) inside the format and let kakoune do the
+evaluation. Note than only curly brace is supported as the quoting char.
+
+The difference is that with kakoune expansion the modeline will change as soon as the variable, register, option,
+value, used in the expression changes and in the case of `%sh` kakoune will rebuild the modeline every second or
+so when in normal mode. This leads for example to a custom time segment definition (`custom.kaktime` below ) which
+will show seconds even if the editor is idle, contrary to the starship time module which change only during pause.
 
 ## Kakoune segments
 
@@ -154,12 +158,12 @@ format = "[]($style)[  %sh{date +%T} ]($style)"
 style = "fg:black bg:bright-green"
 when = ''
 shell = ['true']
-disabled = false
-```
+disabled = falseTips
 
-## Tips
+Toexpansion the modeline will change as soon as the variable
 
-To check if your modeline is not overloaded.
+and in the case
+of `%sh` check if your modeline is not overloaded.
 
 ```sh
 kak_config="~/.config/kak" kakship timings
