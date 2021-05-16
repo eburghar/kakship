@@ -77,12 +77,16 @@ value, used in the expression changes and in the case of `%sh` kakoune will rebu
 so when in normal mode. This leads for example to a custom time segment definition (`custom.kaktime` below) which
 will show seconds even if the editor is idle, contrary to the starship time module which change only during pause.
 
+You can also use environment variables for telling starship when to display a segment, and use a kakoune expansion
+in the format to let kakoune do the update as soon as possible (see `custom.kaklsp_err` bellow).
+
 ## Kakoune segments
 
 Here is a some common segments for kakoune. I'll be happy to maintain a catalog if you send me a MR.
 
 ```toml
-# TODO: use a kakoune option set in appropriate hooks and use %opt{basename} instead of calling a shell
+# TODO: use a kakoune option set in appropriate hooks and use
+#       %opt{basename} instead of calling a shell
 [custom.kakfile]
 description = 'The current Kakoune buffername'
 format = '[/$output ]($style)[]($style inverted) '
@@ -158,6 +162,26 @@ format = "[]($style)[  %sh{date +%T} ]($style)"
 style = "fg:black bg:bright-green"
 when = ''
 shell = ['true']
+disabled = false
+```
+
+```toml
+[custom.kaklsp_err]
+description = "Show errors number from kak-lsp"
+format = "[  %opt{lsp_diagnostic_error_count}]($style)"
+style = "red bold"
+when = '[ -n "$kak_opt_lsp_diagnostic_error_count" -a "$kak_opt_lsp_diagnostic_error_count" -ne 0 ]'
+shell = ['sh']
+disabled = false
+```
+
+```toml
+[custom.kaklsp_warn]
+description = "Show warnings number from kak-lsp"
+format = "[  %opt{lsp_diagnostic_warning_count}]($style)"
+style = "yellow bold"
+when = '[ -n "$kak_opt_lsp_diagnostic_warning_count" -a "$kak_opt_lsp_diagnostic_warning_count" -ne 0 ]'
+shell = ['sh']
 disabled = false
 ```
 
