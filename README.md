@@ -9,11 +9,10 @@
 
 `kakship`
 
-- overrides override the default config file path with `$kak_config/starship.toml`
-- defines the shell to none to disable escaping
-- calls `starship` with the given arguments, so you can use the same arguments than `starship` (show computed config,
-  activates modules, measure modules timings, ...),
-- transforms ansi-codes to `kakoune` face definitions so it can be rendered correctly with all styles
+- overrides override the default config file path with `$kak_config/starship.toml`,
+- defines the shell to none to disable escaping,
+- forward the given arguments to `starship`,
+- transforms ansi-codes to kakoune face definitions when called with `prompt` argument.
 
 It uses an included [yew-ansi](https://github.com/siku2/yew-ansi) crate for parsing the ansi-codes to which I just
 added support for `reversed` and `dimmed` ansi-codes that can be used in `starship` styles definitions.
@@ -58,13 +57,13 @@ plug "eburghar/kakship" do %{
 ## Writing custom segments
 
 To write new segment, you can use the [custom-commands](https://starship.rs/config/#custom-commands) module of starship.
-Define a new section with a dot notation, and insert a variable with the same name in the topmost format variable.
+Define a new section with a dot notation, and insert a variable with the same name in the topmost format definition.
 
 In case you just need string substitutions (like custom.kakmode above), you can avoid calling a shell to evaluate the
 `when` condition by setting the `shell` variable to `['true']` and the `when` variable to `''`. In case no `$output`
 variable appears in the format, `command` variable is not used and no shell is called. The segment will be faster to evaluate.
 
-In case you need to call and external command, you have 2 choices:
+In case you really need to call an external command, you have 2 choices:
 
 1. setup `shell`, `command` and `when` and let starship do the evaluation
 2. use `%sh{}` block or other blocks inside the format and let kakoune do the evaluation
@@ -96,7 +95,7 @@ format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style in
 style = 'bg:yellow fg:black'
 when = ''
 shell = ['true']
-disabled = true
+disabled = false
 ```
 
 ```toml
@@ -133,7 +132,7 @@ description = 'The current buffer filetype'
 format = '\[%opt{filetype}\] '
 when = ''
 shell = ['true']
-disabled = true
+disabled = false
 ```
 
 ```toml
@@ -144,7 +143,7 @@ style = 'bright-white'
 command = 'echo -n $(($kak_cursor_line * 100 / $kak_buf_line_count))%'
 when = '[ -n "$kak_cursor_line" ]'
 shell = ['sh']
-disabled = true
+disabled = false
 ```
 
 ```toml
