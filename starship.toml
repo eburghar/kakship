@@ -37,7 +37,7 @@ disabled = false
 
 [git_commit]
 format = '[ \($hash$tag\)]($style)'
-style = 'fg:bright-yellow'
+style = 'fg:blue dimmed'
 commit_hash_length = 7
 only_detached = false
 tag_symbol = '笠'
@@ -46,6 +46,7 @@ disabled = false
 
 [git_state]
 format = '\( [$state($progress_current/$progress_total)]($style)\)'
+style = 'fg:blue dimmed'
 rebase = 'REBASING'
 merge = 'MERGING'
 revert = 'REVERTING'
@@ -53,12 +54,11 @@ cherry_pick = 'CHERRY-PICKING'
 bisect = 'BISECTING'
 am = 'AM'
 am_or_rebase = 'AM/REBASE'
-style = 'fg:bright-yellow'
 disabled = false
 
 [git_status]
-format = '( [\[$all_status$ahead_behind\]]($style))'
-style = 'fg:bright-yellow'
+format = '[ \[$all_status$ahead_behind\]]($style)[ ]($style)'
+style = 'fg:blue dimmed bold'
 stashed = '\$'
 ahead = '⇡${count}'
 behind = '⇣${count}'
@@ -96,10 +96,10 @@ disabled = false
 "~" = " "
 
 [package]
-format = '[ $version]($style) '
+format = '[  $version]($style)[ ]($style)'
 style = 'cyan'
 display_private = true
-disabled = true
+disabled = false
 
 [battery]
 format = "[ $symbol$percentage]($style) "
@@ -171,7 +171,7 @@ discharging_symbol = ' '
 format = "[  ${ram}]($style)"
 style = "fg:bright-cyan"
 threshold = -1
-disabled = false
+disabled = true
 
 [custom.kakfile]
 description = 'The current Kakoune buffername'
@@ -192,7 +192,7 @@ disabled = true
 
 [custom.kakcursor]
 description = 'The current Kakoune cursor position'
-format = '[%val{cursor_line}:%val{cursor_char_column}]($style)'
+format = '[%val{cursor_line}:%val{cursor_char_column}]($style)[ ]($style)'
 style = 'fg:white'
 when = ''
 shell = ['true']
@@ -239,7 +239,7 @@ disabled = true
 
 [custom.kaklsp_err]
 description = "Show errors number from kak-lsp"
-format = "[  %opt{lsp_diagnostic_error_count}]($style)"
+format = "[  %opt{lsp_diagnostic_error_count}]($style)"
 style = "red bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_error_count" -a "$kak_opt_lsp_diagnostic_error_count" -ne 0 ]'
 shell = ['sh']

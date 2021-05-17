@@ -10,14 +10,14 @@
 `kakship`
 
 - overrides override the default config file path with `$kak_config/starship.toml`,
-- defines the shell to none to disable escaping,
+- set the STARSHIP_SHELL to be `sh`
 - forward the given arguments to `starship`,
 - transforms ansi-codes to kakoune face definitions when called with `prompt` argument.
 
-It uses an included [yew-ansi](https://github.com/siku2/yew-ansi) crate for parsing the ansi-codes to which I just
+It uses a forked [yew-ansi](https://github.com/eburghar/yew-ansi.git) crate for parsing the ansi-codes to which I just
 added support for `reversed` and `dimmed` ansi-codes that can be used in `starship` styles definitions.
 
-The kakoune script call `kakship` when buffer is idle for all normal windows. As `starship` is really fast and format
+The kakoune script call `kakship` in normal mode when idle for all normal windows. As `starship` is really fast and format
 a prompt in ms, the script doesn't need to be clever about when refreshing the status bar.
 
 ## Installation
@@ -172,7 +172,7 @@ disabled = false
 
 ```toml
 [custom.kaklsp_err]
-description = "Show errors number from kak-lsp"
+description = "Show errors number from kak-lsp if any"
 format = "[  %opt{lsp_diagnostic_error_count}]($style)"
 style = "red bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_error_count" -a "$kak_opt_lsp_diagnostic_error_count" -ne 0 ]'
@@ -182,7 +182,7 @@ disabled = false
 
 ```toml
 [custom.kaklsp_warn]
-description = "Show warnings number from kak-lsp"
+description = "Show warnings number from kak-lsp if any"
 format = "[  %opt{lsp_diagnostic_warning_count}]($style)"
 style = "yellow bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_warning_count" -a "$kak_opt_lsp_diagnostic_warning_count" -ne 0 ]'

@@ -1,6 +1,5 @@
-use std::env;
-use std::fmt;
-use std::io;
+use std::{env, fmt, io};
+
 
 pub enum Error {
 	ConfigVarError(env::VarError),
