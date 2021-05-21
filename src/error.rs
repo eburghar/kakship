@@ -16,8 +16,8 @@ impl fmt::Debug for Error {
 					env::VarError::NotUnicode(_) => write!(f, "$kak_config value is not valid")
 				}
 			},
-			Error::IoError(ref err) => write!(f, "Error executing starship {}", err),
-			Error::StarshipError(ref err) => write!(f, "{}", err)
+			Error::IoError(ref err) => write!(f, "Error executing starship {:?}", err),
+			Error::StarshipError(ref err) => write!(f, "{:?}", err)
 		}
 	}
 }

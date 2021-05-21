@@ -90,13 +90,11 @@ in the format to let kakoune do the update as soon as possible (see `custom.kakl
 Here is a some common segments for kakoune. I'll be happy to maintain a catalog if you send me a MR.
 
 ```toml
-# TODO: use a kakoune option set in appropriate hooks and use
-#       %opt{basename} instead of calling a shell
 [custom.kakfile]
 description = 'The current Kakoune buffername'
 format = '[/$output ]($style)[]($style inverted) '
 style = 'bold bg:blue fg:black'
-command = 'basename $kak_buffile'
+command = 'echo -n ${kak_buffile##*/}'
 when = 'true'
 shell = ['sh']
 disabled = false
@@ -173,7 +171,7 @@ disabled = false
 ```toml
 [custom.kaklsp_err]
 description = "Show errors number from kak-lsp if any"
-format = "[  %opt{lsp_diagnostic_error_count}]($style)"
+format = "[  %opt{lsp_diagnostic_error_count}]($style)"
 style = "red bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_error_count" -a "$kak_opt_lsp_diagnostic_error_count" -ne 0 ]'
 shell = ['sh']
