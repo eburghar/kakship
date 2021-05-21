@@ -74,7 +74,7 @@ In case you really need to call an external command, you have 2 choices:
 
 1. setup `shell`, `command` and `when` and let starship do the evaluation
 
-2. use a kakoune expansion blocks (`sh`, `opt`, `val`, `reg`, `file`) inside the format and let kakoune do the
+2. use kakoune expansion blocks (`sh`, `opt`, `val`, `reg`, `file`) inside the format and let kakoune do the
 evaluation. Note than only curly brace is supported as the quoting char.
 
 The difference is that with kakoune expansion the modeline will change as soon as the variable, register, option,
@@ -87,7 +87,7 @@ in the format to let kakoune do the update as soon as possible (see `custom.kakl
 
 ## Kakoune segments
 
-Here is a some common segments for kakoune. I'll be happy to maintain a catalog if you send me a MR.
+Here is a some common segments for kakoune. I'll be happy to maintain a catalog if you send me a PR.
 
 ```toml
 [custom.kakfile]

@@ -1,6 +1,7 @@
 add_newline = false
 format = """\
 ${custom.kakcursor}\
+${custom.kakposition}\
 ${custom.kakmode}\
 ${custom.kakcontext}\
 $directory\
@@ -16,7 +17,6 @@ $git_status\
 ${custom.kaksession}\
 $memory_usage\
 $battery\
-${custom.kakposition}\
 $time\
 ${custom.kaktime}"""
 
@@ -57,8 +57,8 @@ am_or_rebase = 'AM/REBASE'
 disabled = false
 
 [git_status]
-format = '[ \[$all_status$ahead_behind\]]($style)[ ]($style)'
-style = 'fg:blue dimmed bold'
+format = '[\[$all_status$ahead_behind\]]($style)[ ]($style)'
+style = 'fg:cyan dimmed bold'
 stashed = '\$'
 ahead = '⇡${count}'
 behind = '⇣${count}'
@@ -177,7 +177,7 @@ disabled = true
 description = 'The current Kakoune buffername'
 format = '[/$output ]($style)[]($style inverted)'
 style = 'bold bg:blue fg:black'
-command = 'basename $kak_buffile'
+command = 'echo -n ${kak_buffile##*/}'
 when = 'true'
 shell = ['sh']
 disabled = false
@@ -192,7 +192,7 @@ disabled = true
 
 [custom.kakcursor]
 description = 'The current Kakoune cursor position'
-format = '[%val{cursor_line}:%val{cursor_char_column}]($style)[ ]($style)'
+format = '[%val{cursor_line}:%val{cursor_char_column}]($style)'
 style = 'fg:white'
 when = ''
 shell = ['true']
@@ -221,13 +221,12 @@ disabled = true
 
 [custom.kakposition]
 description = 'Relative position of the cursor inside the buffer'
-format = '[$symbol$output]($style)'
-style = 'bright-white'
-symbol = ' '
+format = '[  $output]($style)[ ]($style)'
+style = 'white'
 command = 'echo -n $(($kak_cursor_line * 100 / $kak_buf_line_count))%'
 when = '[ -n "$kak_cursor_line" ]'
 shell = ['sh']
-disabled = true
+disabled = false
 
 [custom.kaktime]
 description = "Alternate time segment using kakoune evaluation"
@@ -238,7 +237,7 @@ shell = ['true']
 disabled = true
 
 [custom.kaklsp_err]
-description = "Show errors number from kak-lsp"
+description = "Show errors number from kak-lsp if any"
 format = "[  %opt{lsp_diagnostic_error_count}]($style)"
 style = "red bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_error_count" -a "$kak_opt_lsp_diagnostic_error_count" -ne 0 ]'
@@ -246,7 +245,7 @@ shell = ['sh']
 disabled = false
 
 [custom.kaklsp_warn]
-description = "Show warnings number from kak-lsp"
+description = "Show warnings number from kak-lsp if any"
 format = "[  %opt{lsp_diagnostic_warning_count}]($style)"
 style = "yellow bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_warning_count" -a "$kak_opt_lsp_diagnostic_warning_count" -ne 0 ]'
