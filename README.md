@@ -103,7 +103,7 @@ disabled = false
 ```toml
 [custom.kaksession]
 description = 'The current Kakoune session'
-format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
+format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
 style = 'bg:yellow fg:black'
 when = ''
 shell = ['true']
@@ -207,3 +207,9 @@ To debug the prompt as set under kakoune
 ```sh
 kak_config="~/.config/kak" kakship prompt
 ```
+
+## References
+
+[powerline.kak](https://github.com/andreyorst/powerline.kak) is another excellent kakoune plugin from Andrey Listopadov
+devoted to modeline which relies merely on kakoune expansions, has themes and even has an API for defining
+new plugins.

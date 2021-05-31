@@ -36,11 +36,11 @@ always_show_remote = true
 disabled = false
 
 [git_commit]
-format = '[ \($hash$tag\)]($style)'
+format = '[\($hash$tag\)]($style)'
 style = 'fg:blue dimmed'
 commit_hash_length = 7
 only_detached = false
-tag_symbol = '笠'
+tag_symbol = ' 笠'
 tag_disabled = false
 disabled = false
 
@@ -184,7 +184,7 @@ disabled = false
 
 [custom.kaksession]
 description = 'The current Kakoune session'
-format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
+format = '[]($style)[  %val{client}:%val{session} ]($style)[]($style inverted)'
 style = 'bg:yellow fg:black italic'
 when = ''
 shell = ['true']

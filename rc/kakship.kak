@@ -15,8 +15,9 @@ define-command -hidden -docstring "set modeline using kakship" starship-modeline
 	evaluate-commands %sh{
 		# trigger var export: kak_buffile, kak_session, kak_client, kak_config, kak_cursor_line, kak_buf_line_count
 		#                     kak_opt_lsp_diagnostic_error_count, kak_opt_lsp_diagnostic_warning_count
-		prompt=$(cd ${kak_buffile%/*} && kakship prompt)
-		printf 'set-option window modelinefmt %%{%s}' "${prompt}"
+		dir=${kak_buffile%/*}
+		[ "$dir" != "$kak_buffile" ] && cd $dir
+		printf 'set-option window modelinefmt %%{%s}' "$(kakship prompt)"
 	}
 }
 
