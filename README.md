@@ -52,7 +52,7 @@ with [plug.kak](https://github.com/andreyorst/plug.kak)
 
 ```
 plug "eburghar/kakship" do %{
-	cargo install --force --path . --root ~/.local
+	cargo install --force --path . --root %sh{ echo -n ~/.local }
 	[ ! -e $kak_config/starship.toml ] && cp starship.toml $kak_config/
 } config %{
 	kakship-enable
