@@ -78,12 +78,13 @@ In case you really need to call an external command, you have 3 choices:
 2. use kakoune expansion blocks (`sh`, `opt`, `val`, `reg`, `file`) inside the format and let kakoune do the
 evaluation. Note than only curly brace is supported as the quoting char.
 
-3. a mix of kakoune and starship evalutions
+3. a mix of kakoune and starship evaluations
 
 With kakoune expansion the modeline will change as soon as the variable, register, option, value, used in the
 expression changes and in the case of `%sh` kakoune will rebuild the modeline every second or so when in normal
-mode. This leads for example to a custom time segment definition (`custom.kaktime` below) which will show seconds
-even if the editor is idle, contrary to the starship time module which change only during pause.
+mode. In other words, the modline will change without ever needing to call kakship. This leads for example to
+a custom time segment definition (`custom.kaktime` below) which will show seconds even if the editor is idle,
+contrary to the starship [time module](https://starship.rs/config/#time) which changes only during pause.
 
 As for the 3rd option, you can use environment variables (starship evaluation) for telling starship when to
 display a segment, and use a kakoune expansion in the format to let kakoune do the update as soon as possible (see
