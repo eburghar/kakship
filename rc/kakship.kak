@@ -3,9 +3,9 @@ declare-option -docstring "modelinefmt backup value." str kakship_modelinefmt_ba
 define-command -docstring "kakship-enable: require kakship module and enable kakship for all regular windows." \
 kakship-enable %{
 	remove-hooks global kakship(-.*)?
-	hook -group kakship global WinCreate ^[^*]+$ %{
+	hook -group kakship global WinCreate ^[^*].*[^*]$ %{
 		require-module kakship
-		hook -group kakship window NormalIdle .* starship-modeline
+		hook -group kakship window NormalIdle "" starship-modeline
 	}
 }
 
