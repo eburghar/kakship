@@ -1,10 +1,9 @@
 [package]
 name = "kakship"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["Éric BURGHARD <eric@itsufficient.me>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+kak = { git = "https://github.com/eburghar/kak.rs.git", branch = "main" }
 yew-ansi = { git = "https://github.com/eburghar/yew-ansi.git", default-features = false }
