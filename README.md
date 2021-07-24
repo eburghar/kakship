@@ -17,9 +17,9 @@
 It uses a forked [yew-ansi](https://github.com/eburghar/yew-ansi.git) crate for parsing the ansi-codes to which I just
 added support for `reversed` and `dimmed` ansi-codes that can be used in `starship` styles definitions.
 
-The kakoune script call `kakship` in normal mode when idle for all buffers whose names don't start with `*`. As
-`starship` is really fast and format a prompt in ms, the script doesn't need to be clever about when refreshing
-the status bar.
+The kakoune script call `kakship` in normal mode when idle for all buffers whose names don't start and end with
+`*`. As `starship` is really fast and format a prompt in ms, the script doesn't need to be clever about when
+refreshing the status bar.
 
 ## Installation
 
