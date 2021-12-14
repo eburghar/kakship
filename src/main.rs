@@ -1,8 +1,8 @@
 mod error;
 
 use crate::error::Error;
+use kak::{escape::Mode, face};
 use std::{env, path::Path, process::Command};
-use kak::{face, escape::Mode};
 
 fn main() -> Result<(), Error> {
 	let config_dir = env::var("kak_config")?;
@@ -15,7 +15,7 @@ fn main() -> Result<(), Error> {
 		.output()?;
 
 	return if starship.status.code() != Some(0) {
-		Err(Error::StarshipError(
+		Err(Error::Starship(
 			String::from_utf8_lossy(&starship.stderr).into(),
 		))
 	} else {
