@@ -90,6 +90,15 @@ As for the 3rd option, you can use environment variables (starship evaluation) f
 display a segment, and use a kakoune expansion in the format to let kakoune do the update as soon as possible (see
 `custom.kaklsp_err` bellow).
 
+If you need access to kakoune variables in your segments, don't forget to add its name prefixed by `kak_opt_`
+as a comment in `kakship.kak` file, otherwise it will not be exported to starship process.
+
+```bash
+		# trigger var export: kak_buffile, kak_session, kak_client, kak_config, kak_cursor_line, kak_buf_line_count
+		#                     kak_opt_lsp_diagnostic_error_count, kak_opt_lsp_diagnostic_warning_count,
+		#                     kak_opt_lsp_diagnostic_hint_count
+```
+
 ## Kakoune segments
 
 Here are some common custom segments for kakoune. I'll be happy to maintain a catalog if you send me a PR.
@@ -189,6 +198,36 @@ description = "Show warnings number from kak-lsp if any"
 format = "[  %opt{lsp_diagnostic_warning_count}]($style)"
 style = "yellow bold"
 when = '[ -n "$kak_opt_lsp_diagnostic_warning_count" -a "$kak_opt_lsp_diagnostic_warning_count" -ne 0 ]'
+shell = ['sh']
+disabled = false
+```
+
+```toml
+[custom.kaklsp_hint]
+description = "Show hints number from kak-lsp if any"
+format = "[ ﯦ %opt{lsp_diagnostic_hint_count}]($style)"
+style = "yellow bold"
+when = '[ -n "$kak_opt_lsp_diagnostic_hint_count" -a "$kak_opt_lsp_diagnostic_hint_count" -ne 0 ]'
+shell = ['sh']
+disabled = false
+```
+
+```toml
+[custom.kaklsp_code_actions]
+description = "Show lsp code actions if any"
+format = "[ %opt{lsp_modeline_code_actions} ]($style)"
+style = "yellow bold"
+when = '[ -n "$kak_opt_lsp_modeline_code_actions" ]'
+shell = ['sh']
+disabled = true
+```
+
+```toml
+[custom.kaklsp_progress]
+description = "Show activity of kak-lsp if any"
+format = "[ ]($style)"
+style = "bright-white bold"
+when = '[ -n "$kak_opt_lsp_modeline_progress" ]'
 shell = ['sh']
 disabled = false
 ```

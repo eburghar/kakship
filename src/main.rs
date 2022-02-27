@@ -5,8 +5,7 @@ use kak::{escape::Mode, face};
 use std::{env, path::Path, process::Command};
 
 fn main() -> Result<(), Error> {
-	let config_dir = env::var("kak_config")?;
-	let config = Path::new(&config_dir).join("starship.toml");
+	let config = Path::new(&env::var("kak_config")?).join("starship.toml");
 	let args: Vec<String> = env::args().skip(1).collect();
 	let starship = Command::new("starship")
 		.env("STARSHIP_SHELL", "sh")
